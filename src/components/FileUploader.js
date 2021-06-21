@@ -4,7 +4,8 @@ const FileUploader = ({ onUploadFileFunc }) => {
   const handleChangeImage = (e) => {
     e.preventDefault();
     if (onUploadFileFunc) {
-      onUploadFileFunc(e.target.files);
+      const files = Array.from(e.target.files).slice(0, 10);
+      onUploadFileFunc(files);
     }
     e.target.value = null;
   };
@@ -45,6 +46,7 @@ const FileUploader = ({ onUploadFileFunc }) => {
             </label>
             <p className='pl-1'>or drag and drop</p>
           </div>
+          <p className='text-xs text-gray-500'>Maximum number of files 10</p>
         </div>
       </div>
     </>

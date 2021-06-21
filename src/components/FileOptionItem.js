@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-const FileOptionItem = ({ file, onChangeOptions }) => {
+const FileOptionItem = ({
+  file,
+  onChangeOptions,
+  commonWidth,
+  commonHeight,
+}) => {
   const [uploadedFileAsString, setUploadedFileAsString] = useState(null);
   const [optionsFile, setOptionsFile] = useState({ width: 0, height: 0 });
   const [formValues, setFormValues] = useState({ width: 0, height: 0 });
@@ -23,6 +28,34 @@ const FileOptionItem = ({ file, onChangeOptions }) => {
     };
     reader.readAsDataURL(file);
   }, [file, onChangeOptions]);
+
+  useEffect(() => {
+    if (!commonWidth && !commonHeight) {
+      return;
+    }
+
+    const aspectRatio = optionsFile.width / optionsFile.height;
+    let newFormValues = {};
+
+    if (commonWidth) {
+      newFormValues = {
+        width: Number.parseInt(commonWidth),
+        height: Math.round(Number.parseInt(commonWidth) / aspectRatio),
+      };
+    }
+
+    if (commonHeight) {
+      newFormValues = {
+        height: Number.parseInt(commonHeight),
+        width: Math.round(Number.parseInt(commonHeight) * aspectRatio),
+      };
+    }
+
+    setFormValues(newFormValues);
+    if (onChangeOptions) {
+      onChangeOptions(newFormValues);
+    }
+  }, [commonWidth, commonHeight, formValues, onChangeOptions, optionsFile]);
 
   const handleChangeInput = (e) => {
     const aspectRatio = optionsFile.width / optionsFile.height;
@@ -78,7 +111,7 @@ const FileOptionItem = ({ file, onChangeOptions }) => {
                 id='width'
                 onChange={handleChangeInput}
                 value={formValues?.width}
-                className='mt-1 p-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                className='border-2 border-gray-200 mt-1 p-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
               />
             </div>
             <div className='col-span-2'>
@@ -94,7 +127,7 @@ const FileOptionItem = ({ file, onChangeOptions }) => {
                 id='height'
                 onChange={handleChangeInput}
                 value={formValues?.height}
-                className='mt-1 p-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
+                className='border-2 border-gray-200 mt-1 p-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md'
               />
             </div>
           </div>
