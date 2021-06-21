@@ -11,10 +11,19 @@ const App = () => {
   };
 
   const initDowloadFile = async (uploadedFileAsString, options) => {
-    const svg = uploadedFileAsString.replace(
-      /(width=")\d+("\W+height=")\d+/,
-      `$1${options.width}$2${options.height}`
-    );
+    const includeWH =
+      !!uploadedFileAsString.match(/^<svg.*?width="(\d+)/) ||
+      !!uploadedFileAsString.match(/^<svg.*?width="(\d+)/);
+
+    const svg = includeWH
+      ? uploadedFileAsString.replace(
+          /(width=")\d+("\W+height=")\d+/,
+          `$1${options.width}$2${options.height}`
+        )
+      : uploadedFileAsString.replace(
+          `<svg`,
+          `<svg width="${options.width}" height="${options.height}"`
+        );
     let img = await svg2png({
       input: svg.trim(),
       encoding: 'dataURL',
